@@ -12,6 +12,6 @@ class Feed extends Model
 
     public function animals(): BelongsToMany
     {
-        return $this->belongsToMany(Animal::class);
+        return $this->belongsToMany(Animal::class)->withPivot('portion');
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FeedController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\AnimalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/animals', [AnimalController::class, 'showAll'])->name('animals');
+Route::get('/employees', [EmployeeController::class, 'showAll'])->name('employees');
+Route::get('/feeds', [FeedController::class, 'showAll'])->name('feeds');
+
+
+
+
