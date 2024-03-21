@@ -12,4 +12,15 @@ class FeedController extends Controller
     {
         return view('feeds', ['feeds' => Feed::with('animals')->get()]);
     }
+
+    public function showFeedData(int $id)
+    {
+        $feed = Feed::with('animals')->find($id);
+
+        if ($feed === null) {
+            return response('Feed not found', 404);
+        }
+
+        return view('feedData', ['feed' => $feed]);
+    }
 }

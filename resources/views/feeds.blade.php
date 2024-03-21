@@ -20,6 +20,7 @@
                 <th>Species</th>
                 <th>Name</th>
                 <th>Portion</th>
+                <th rowspan="2">Feed Details</th>
             </tr>
             </thead>
             <tbody class="table-group-divider">

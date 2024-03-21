@@ -16,5 +16,10 @@
         <td>{{ $feed->type }}</td>
         <td>{{ $feed->name }}</td>
         <td>{{ $feed->pivot->portion}}</td>
+        @if($index == 0)
+            <td rowspan="{{ count($animal->feeds) }}">
+                <a href="{{ route('animalData', ['id' => $animal->id]) }}" class="link link-light">View details</a>
+            </td>
+        @endif
     </tr>
 @endforeach

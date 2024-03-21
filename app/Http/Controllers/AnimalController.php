@@ -12,4 +12,14 @@ class AnimalController extends Controller
     {
         return view('animals', ['animals' => Animal::with('employees', 'feeds')->get()]);
     }
+
+    public function showAnimalData(int $id)
+    {
+        $animal = Animal::with('employees', 'feeds')->find($id);
+        if ($animal === null) {
+            return response('Animal not found', 404);
+        }
+
+        return view('animalData', ['animal' => $animal]);
+    }
 }
