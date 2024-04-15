@@ -12,4 +12,14 @@ class EmployeeController extends Controller
     {
         return view('employees', ['employees' => Employee::with('animals')->get()]);
     }
+
+    public function showEmployeeData(int $id)
+    {
+        $employee = Employee::with('animals')->find($id);
+        if ($employee === null) {
+            return response('Employee not found', 404);
+        }
+
+        return view('employeeData', ['employee' => $employee]);
+    }
 }

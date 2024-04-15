@@ -11,5 +11,8 @@
             @endforeach
         </ul>
     </td>
+    <td>
+        <a href="{{ route('employeeData', ['id' => $employee->id]) }}" class="link link-light">View details</a>
+    </td>
 </tr>
 

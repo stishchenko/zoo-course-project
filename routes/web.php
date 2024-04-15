@@ -18,12 +18,27 @@ use App\Http\Controllers\AnimalController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('animals');
 });
 
-Route::get('/animals', [AnimalController::class, 'showAll'])->name('animals');
-Route::get('/employees', [EmployeeController::class, 'showAll'])->name('employees');
-Route::get('/feeds', [FeedController::class, 'showAll'])->name('feeds');
+Route::prefix('animals')->group(function () {
+    Route::get('/', [AnimalController::class, 'showAll'])->name('animals');
+    Route::get('/{id}', [AnimalController::class, 'showAnimalData'])
+        ->where('id', '[0-9]+')->name('animalData');
+});
+
+Route::prefix('employees')->group(function () {
+    Route::get('/', [EmployeeController::class, 'showAll'])->name('employees');
+    Route::get('/{id}', [EmployeeController::class, 'showEmployeeData'])
+        ->where('id', '[0-9]+')->name('employeeData');
+});
+
+
+Route::prefix('feeds')->group(function () {
+    Route::get('/', [FeedController::class, 'showAll'])->name('feeds');
+    Route::get('/{id}', [FeedController::class, 'showFeedData'])
+        ->where('id', '[0-9]+')->name('feedData');
+});
 
 
 

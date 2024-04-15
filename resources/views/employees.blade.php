@@ -13,6 +13,7 @@
                 <th>Department</th>
                 <th>Job</th>
                 <th>Animals</th>
+                <th>Employee Details</th>
             </tr>
             </thead>
             <tbody class="table-group-divider">
