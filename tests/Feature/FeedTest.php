@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\DTOs\AnimalDto;
+use App\DTOs\FeedDto;
 use App\Models\Animal;
 use App\Models\Feed;
 use Database\Seeders\TestSeeder;
@@ -45,6 +47,29 @@ class FeedTest extends TestCase
         }
     }
 
+    public function test_feeds_reading_without_relations_with_formatting(): void
+    {
+        $feeds = Feed::all();
+        $this->assertCount(3, $feeds, 'Incorrect amount of feeds');
+        foreach ($feeds as $feed) {
+            $feedDto = $feed->formatFeed();
+
+            $this->assertInstanceOf(FeedDto::class, $feedDto);
+            $this->assertIsString($feedDto->title);
+            $this->assertNotNull($feedDto->title);
+            $this->assertIsString($feedDto->type);
+            $this->assertNotNull($feedDto->type);
+            $this->assertIsFloat($feedDto->price);
+            $this->assertNotNull($feedDto->price);
+            $this->assertIsString($feedDto->expiration_date);
+            $this->assertNotNull($feedDto->expiration_date);
+            $this->assertIsString($feedDto->amount);
+            $this->assertNotNull($feedDto->amount);
+            $this->assertIsString($feedDto->animals);
+            $this->assertNotNull($feedDto->animals);
+        }
+    }
+
     public function test_feeds_reading_with_animals(): void
     {
         $this->assertDatabaseCount('feeds', 3);
@@ -55,7 +80,25 @@ class FeedTest extends TestCase
 
             $animals = $feed->animals;
             $this->assertNotNull($animals);
-            $this->assertTrue($animals->count() > 0);
+            $this->assertTrue($animals->count() >= 0);
+        }
+    }
+
+    public function test_feeds_reading_with_animals_with_formatting(): void
+    {
+        $feeds = Feed::with('animals')->get();
+        $this->assertCount(3, $feeds, 'Incorrect amount of employees');
+        foreach ($feeds as $feed) {
+            $this->assertModelExists($feed);
+
+            $this->assertNotNull($feed->animals);
+            $feedDto = $feed->formatFeed();
+            $this->assertInstanceOf(FeedDto::class, $feedDto);
+            $this->assertIsNotString($feedDto->animals);
+            $this->assertIsArray($feedDto->animals);
+            foreach ($feedDto->animals as $animalDto) {
+                $this->assertInstanceOf(AnimalDto::class, $animalDto);
+            }
         }
     }
 

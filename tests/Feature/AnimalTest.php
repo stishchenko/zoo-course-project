@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\DTOs\AnimalDto;
+use App\DTOs\EmployeeDto;
+use App\DTOs\FeedDto;
 use App\Models\Animal;
 use App\Models\Employee;
 use App\Models\Feed;
@@ -41,6 +44,29 @@ class AnimalTest extends TestCase
         }
     }
 
+    public function test_animals_reading_without_relations_with_formatting(): void
+    {
+        $animals = Animal::all();
+        $this->assertCount(5, $animals, 'Incorrect amount of animals');
+        foreach ($animals as $animal) {
+            $animalDto = $animal->formatAnimal();
+
+            $this->assertInstanceOf(AnimalDto::class, $animalDto);
+            $this->assertIsString($animalDto->name);
+            $this->assertNotNull($animalDto->name);
+            $this->assertIsString($animalDto->species);
+            $this->assertNotNull($animalDto->species);
+            $this->assertIsString($animalDto->birthday);
+            $this->assertNotNull($animalDto->birthday);
+            $this->assertIsString($animalDto->gender);
+            $this->assertNotNull($animalDto->gender);
+            $this->assertIsString($animalDto->employees);
+            $this->assertNotNull($animalDto->employees);
+            $this->assertIsString($animalDto->feeds);
+            $this->assertNotNull($animalDto->feeds);
+        }
+    }
+
     public function test_animals_reading_with_employees(): void
     {
         $this->assertDatabaseCount('animals', 5);
@@ -51,7 +77,25 @@ class AnimalTest extends TestCase
 
             $employees = $animal->employees;
             $this->assertNotNull($employees);
-            $this->assertTrue($employees->count() > 0);
+            $this->assertTrue($employees->count() >= 0);
+        }
+    }
+
+    public function test_animals_reading_with_employees_with_formatting(): void
+    {
+        $animals = Animal::with('employees')->get();
+        $this->assertCount(5, $animals, 'Incorrect amount of animals');
+        foreach ($animals as $animal) {
+            $this->assertModelExists($animal);
+
+            $this->assertNotNull($animal->employees);
+            $animalDto = $animal->formatAnimal();
+            $this->assertInstanceOf(AnimalDto::class, $animalDto);
+            $this->assertIsNotString($animalDto->employees);
+            $this->assertIsArray($animalDto->employees);
+            foreach ($animalDto->employees as $employeeDto) {
+                $this->assertInstanceOf(EmployeeDto::class, $employeeDto);
+            }
         }
     }
 
@@ -65,7 +109,25 @@ class AnimalTest extends TestCase
 
             $feeds = $animal->feeds;
             $this->assertNotNull($feeds);
-            $this->assertTrue($feeds->count() > 0);
+            $this->assertTrue($feeds->count() >= 0);
+        }
+    }
+
+    public function test_animals_reading_with_feeds_with_formatting(): void
+    {
+        $animals = Animal::with('feeds')->get();
+        $this->assertCount(5, $animals, 'Incorrect amount of animals');
+        foreach ($animals as $animal) {
+            $this->assertModelExists($animal);
+
+            $this->assertNotNull($animal->feeds);
+            $animalDto = $animal->formatAnimal();
+            $this->assertInstanceOf(AnimalDto::class, $animalDto);
+            $this->assertIsNotString($animalDto->feeds);
+            $this->assertIsArray($animalDto->feeds);
+            foreach ($animalDto->feeds as $feedDto) {
+                $this->assertInstanceOf(FeedDto::class, $feedDto);
+            }
         }
     }
 

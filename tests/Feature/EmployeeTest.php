@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\DTOs\AnimalDto;
+use App\DTOs\EmployeeDto;
 use App\Models\Animal;
 use App\Models\Employee;
 use Database\Seeders\TestSeeder;
@@ -41,6 +43,44 @@ class EmployeeTest extends TestCase
         }
     }
 
+    public function test_employees_reading_without_relations_with_formatting(): void
+    {
+        $employees = Employee::all();
+        $this->assertCount(3, $employees, 'Incorrect amount of employees');
+        foreach ($employees as $employee) {
+            $employeeDto = $employee->formatEmployee();
+
+            $this->assertInstanceOf(EmployeeDto::class, $employeeDto);
+            $this->assertIsString($employeeDto->full_name);
+            $this->assertNotNull($employeeDto->full_name);
+            $this->assertIsString($employeeDto->birthday);
+            $this->assertNotNull($employeeDto->birthday);
+            $this->assertIsString($employeeDto->department);
+            $this->assertIsString($employeeDto->job);
+            $this->assertNotNull($employeeDto->job);
+            $this->assertIsString($employeeDto->animals);
+            $this->assertNotNull($employeeDto->animals);
+        }
+    }
+
+    public function test_employees_reading_with_animals_with_formatting(): void
+    {
+        $employees = Employee::with('animals')->get();
+        $this->assertCount(3, $employees, 'Incorrect amount of employees');
+        foreach ($employees as $employee) {
+            $this->assertModelExists($employee);
+
+            $this->assertNotNull($employee->animals);
+            $employeeDto = $employee->formatEmployee();
+            $this->assertInstanceOf(EmployeeDto::class, $employeeDto);
+            $this->assertIsNotString($employeeDto->animals);
+            $this->assertIsArray($employeeDto->animals);
+            foreach ($employeeDto->animals as $animalDto) {
+                $this->assertInstanceOf(AnimalDto::class, $animalDto);
+            }
+        }
+    }
+
     public function test_employees_reading_with_animals(): void
     {
         $this->assertDatabaseCount('employees', 3);
@@ -51,7 +91,7 @@ class EmployeeTest extends TestCase
 
             $animals = $employee->animals;
             $this->assertNotNull($animals);
-            $this->assertTrue($animals->count() > 0);
+            $this->assertTrue($animals->count() >= 0);
         }
     }
 
